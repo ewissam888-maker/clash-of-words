@@ -459,9 +459,6 @@ io.on('connection', (socket) => {
         joueur2: joueur2.pseudo,
       });
 
-      joueurs_en_recherche = joueurs_en_recherche.filter(
-        j => j.socketId !== joueur1.socketId && j.socketId !== joueur2.socketId
-      );
 
 
 
@@ -496,7 +493,7 @@ io.on('connection', (socket) => {
 
 
   socket.on('inviter_partie', (data) => {
-    destinataire = Object.values(joueurs).find(j => j.nom === data.destinataire)
+    const destinataire = Object.values(joueurs).find(j => j.nom === data.destinataire)
 
     if (destinataire) destinataire.socket.emit('invitation_ami', { de: data.de, destinataire: data.destinataire, code: data.code });
 
@@ -822,8 +819,12 @@ io.on('connection', (socket) => {
       ||
       parties[id].contre.pseudo === pseudo);
     console.log("Suppression de la partie:", IDpartie, "...");
-    if (IDpartie) delete parties[IDpartie];
+    if (IDpartie) {
+      clearTimeout(partie.chrono);
+      delete parties[IDpartie];
+    }
     console.log("Mise a jour", parties);
+
   })
 
 
