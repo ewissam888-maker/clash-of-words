@@ -824,24 +824,23 @@ io.on('connection', (socket) => {
       }]
     };
 
-    
+
     fetch(URL, {
-      method: "POST", 
+      method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify(payload) 
+      body: JSON.stringify(payload)
     })
-      .then(response => response.json()) 
+      .then(response => response.json())
       .then(data => {
         console.log("Reponse GEMINI: ", data);
-        const definition = data.candidates[0].content.parts[0].text;
-        socket.emit('afficher_definition', {mot: mot, def:definition});
+
+        const definition = data?.candidates?.[0]?.content?.parts?.[0]?.text
+          || "Désolé, je n'ai pas pu générer de réponse.";
+
+        socket.emit('afficher_definition', { mot: mot, def: definition });
       })
-      .catch(error => {
-        console.error("Erreur Gemini:", error);
-        
-      });
   })
 
 
