@@ -830,7 +830,7 @@ io.on('connection', (socket) => {
     const payload = {
       contents: [{
         parts: [{
-          text: `Donne-moi la définition en deux lignes grand maximum : ${mot}`
+          text: `Donne-moi la définition en deux lignes grand maximum : voiture`
         }]
       }]
     };
