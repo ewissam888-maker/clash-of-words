@@ -830,7 +830,7 @@ io.on('connection', (socket) => {
     const payload = {
       contents: [{
         parts: [{
-          text: `Réponds uniquement en JSON avec les clés suivantes : 'definition', 'exemple', 'synonyme' pour le mot : voiture`
+          text: `Réponds uniquement en JSON avec les clés suivantes : 'definition', 'exemple', 'phonétique', 'nature' pour le mot : voiture`
         }]
       }]
     };
