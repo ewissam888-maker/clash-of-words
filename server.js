@@ -813,6 +813,8 @@ io.on('connection', (socket) => {
   })
 
 
+
+  cache = {};
   const API_GROQ = process.env.API_GROQ;
   socket.on('Demande_definition', async (mot) => {
     console.log("Demande de definition du mot :", mot);
@@ -822,6 +824,19 @@ io.on('connection', (socket) => {
       return;
     }
 
+    if (cache[mot])
+    {
+      let details = cache[mot];
+      console.log("Mot deja dans le cache");
+      socket.emit('afficher_definition', {
+        mot,
+        def: details.definition,
+        phon: details.phonétique,
+        nature: details.nature,
+        exemple: details.exemple
+      });
+      return;
+    }
     const URL = "https://api.groq.com/openai/v1/chat/completions";
 
     const payload = {
@@ -841,7 +856,7 @@ io.on('connection', (socket) => {
       ],
       temperature: 0.2
     };
-
+    
     try {
       const response = await fetch(URL, {
         method: "POST",
@@ -866,7 +881,7 @@ io.on('connection', (socket) => {
         return;
       }
 
-      // Nettoyage sécurité
+    
       text = text.replace(/```json/g, "").replace(/```/g, "").trim();
 
       let details;
@@ -876,8 +891,8 @@ io.on('connection', (socket) => {
         console.error("❌ JSON invalide :", text);
         return;
       }
-
-      console.log("Details :", details);
+      cache[mot] = details;
+      console.log("Enregistrement du mot dans le cache");
 
       socket.emit('afficher_definition', {
         mot,
