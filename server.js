@@ -858,9 +858,12 @@ io.on('connection', (socket) => {
         console.log("Details :", details);
 
 
-
-
-        //socket.emit('afficher_definition', { mot: mot, def: definition });
+        socket.emit('afficher_definition', {
+          mot: mot,
+          def: details.definition,
+          phon: details.phonétique,
+          nature: details.nature
+        });
       })
   })
 
