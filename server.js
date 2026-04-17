@@ -258,6 +258,7 @@ io.on('connection', (socket) => {
             }
           })
           console.log("Le joueur ", joueur.nom, "était en partie.\n", adv, " a donc gagné par forfait");
+          clearTimeout(parties[id].chrono);
           delete parties[id];
           console.log("Suppression de la partie", parties);
 
@@ -820,7 +821,7 @@ io.on('connection', (socket) => {
       parties[id].contre.pseudo === pseudo);
     console.log("Suppression de la partie:", IDpartie, "...");
     if (IDpartie) {
-      clearTimeout(partie.chrono);
+      clearTimeout(partie[IDpartie]);
       delete parties[IDpartie];
     }
     console.log("Mise a jour", parties);
