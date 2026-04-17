@@ -815,7 +815,7 @@ io.on('connection', (socket) => {
 
 
   socket.on('Demande_definition', (mot) => {
-
+    console.log("Demande de definition du mot :", mot);
 
     const API_Gemini = process.env.API_GEMINI;
 
