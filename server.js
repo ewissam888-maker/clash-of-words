@@ -819,29 +819,45 @@ io.on('connection', (socket) => {
     const payload = {
       contents: [{
         parts: [{
-          text: `Donne-moi la définition en deux lignes grand maximum : ${mot}`
+          text: `Donne-moi la définition du mot "${mot}" en deux lignes maximum.`
         }]
       }]
     };
 
-
     fetch(URL, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     })
-      .then(response => response.json())
-      .then(data => {
-        console.log("Reponse GEMINI: ", data);
+      .then(async (response) => {
+        const data = await response.json();
+        
+       
+        if (data.error) {
+          console.error("❌ Erreur API Gemini :", data.error.message);
+          return socket.emit('afficher_definition', { mot, def: "Définition indisponible (Erreur API)." });
+        }
 
-        const definition = data?.candidates?.[0]?.content?.parts?.[0]?.text
-          || "Désolé, je n'ai pas pu générer de réponse.";
+        
+        if (!data.candidates || data.candidates.length === 0) {
+          console.warn("⚠️ Gemini n'a renvoyé aucun candidat (blocage ou vide).");
+          return socket.emit('afficher_definition', { mot, def: "Aucune définition trouvée pour ce mot." });
+        }
 
+        // 3. Extraction sécurisée du texte
+        const candidate = data.candidates[0];
+        const definition = candidate?.content?.parts?.[0]?.text 
+                           || "Désolé, je n'ai pas pu générer de définition.";
+
+        console.log(`📖 Définition envoyée pour : ${mot}`);
         socket.emit('afficher_definition', { mot: mot, def: definition });
       })
-  })
+      .catch(err => {
+        // 4. Gestion des erreurs réseau (Fetch error)
+        console.error("🔥 Erreur critique Fetch Gemini :", err.message);
+        socket.emit('afficher_definition', { mot, def: "Erreur de connexion au service de définition." });
+      });
+  });
 
 
 
