@@ -834,6 +834,8 @@ io.on('connection', (socket) => {
     })
       .then(response => response.json())
       .then(data => {
+        console.log(API_Gemini);
+        console.log(process.env.API_GEMINI);
         console.log("Reponse GEMINI: ", data);
 
 
