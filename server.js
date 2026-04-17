@@ -830,7 +830,7 @@ io.on('connection', (socket) => {
     const payload = {
       contents: [{
         parts: [{
-          text: `Donne-moi la définition en deux lignes grand maximum : voiture`
+          text: `Réponds uniquement en JSON avec les clés suivantes : 'definition', 'exemple', 'synonyme' pour le mot : ${mot}`
         }]
       }]
     };
@@ -849,6 +849,9 @@ io.on('connection', (socket) => {
         console.log(process.env.API_GEMINI);
         console.log("Reponse GEMINI: ", data);
         console.log("Réponse complète :", JSON.stringify(data, null, 2));
+        const definitionBrute = data.candidates[0].content.parts[0].text;
+        const details = JSON.parse(definitionBrute);
+        console.log("Details :",details);
 
 
 
