@@ -855,6 +855,7 @@ io.on('connection', (socket) => {
           .trim();
 
         const details = JSON.parse(clean);
+        console.log("Details :", details);
 
 
 
