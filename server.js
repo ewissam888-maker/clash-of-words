@@ -31,6 +31,7 @@ const io = new Server(server, {
 const joueurs = {};
 const parties = {};
 const parties_invit = {};
+const cache = {};
 const joueurs_en_recherche = [];
 const disconnectTimers = {};
 io.on('connection', (socket) => {
@@ -814,7 +815,7 @@ io.on('connection', (socket) => {
 
 
 
-  cache = {};
+
   const API_GROQ = process.env.API_GROQ;
   socket.on('Demande_definition', async (mot) => {
     console.log("Demande de definition du mot :", mot);
