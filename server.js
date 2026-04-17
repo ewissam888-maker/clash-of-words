@@ -415,8 +415,17 @@ io.on('connection', (socket) => {
 
     // Dès qu'on a 2 joueurs, on les associe
     if (joueurs_en_recherche.length >= 2) {
+
       const joueur1 = joueurs_en_recherche.shift(); // retire le 1er
       const joueur2 = joueurs_en_recherche.shift(); // retire le 2ème
+
+      if (joueur1.socketId === joueur2.socketId) {
+        console.log("⚠️ Match annulé : joueur contre lui-même");
+
+        joueurs_en_recherche.unshift(joueur1);
+        return;
+      }
+
       socket.emit('maj_enligne', {
         nb_enligne: Object.keys(joueurs).length,
         nb_recherche: joueurs_en_recherche.length - 1  // ✅ toi exclu
@@ -825,8 +834,7 @@ io.on('connection', (socket) => {
       return;
     }
 
-    if (cache[mot])
-    {
+    if (cache[mot]) {
       let details = cache[mot];
       console.log("Mot deja dans le cache");
       socket.emit('afficher_definition', {
@@ -857,7 +865,7 @@ io.on('connection', (socket) => {
       ],
       temperature: 0.2
     };
-    
+
     try {
       const response = await fetch(URL, {
         method: "POST",
@@ -882,7 +890,7 @@ io.on('connection', (socket) => {
         return;
       }
 
-    
+
       text = text.replace(/```json/g, "").replace(/```/g, "").trim();
 
       let details;
