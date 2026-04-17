@@ -7,6 +7,7 @@ const { deserialize } = require('v8');
 const fs = require('fs');
 const dotenv = require("dotenv")
 dotenv.config()
+console.log("Clé détectée :", process.env.API_GEMINI);
 
 // ══ CONNEXION BASE DE DONNÉES ══
 const db = mysql.createPool({
