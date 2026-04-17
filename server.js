@@ -837,7 +837,7 @@ io.on('connection', (socket) => {
     })
       .then(response => response.json()) 
       .then(data => {
-        console.log("Reponse GEMINI : ", data);
+        console.log("Reponse GEMINI: ", data);
         const definition = data.candidates[0].content.parts[0].text;
         socket.emit('afficher_definition', {mot: mot, def:definition});
       })
