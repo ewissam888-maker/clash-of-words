@@ -813,60 +813,84 @@ io.on('connection', (socket) => {
   })
 
 
-
-  socket.on('Demande_definition', (mot) => {
+  const API_GROQ = process.env.API_GROQ;
+  socket.on('Demande_definition', async (mot) => {
     console.log("Demande de definition du mot :", mot);
 
-    const API_Gemini = process.env.API_GEMINI;
-
-    if (!API_Gemini) {
-      console.error("❌ Erreur : La clé API_GEMINI est introuvable dans le .env");
+    if (!API_GROQ) {
+      console.error("❌ Clé API Groq introuvable");
       return;
     }
 
-    const URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_Gemini}`;
-
+    const URL = "https://api.groq.com/openai/v1/chat/completions";
 
     const payload = {
-      contents: [{
-        parts: [{
-          text: `Réponds uniquement en JSON avec les clés suivantes : 'definition', 'exemple', 'phonétique', 'nature' pour le mot : ${mot}`
-        }]
-      }]
+      model: "llama3-8b-8192", // modèle rapide et gratuit souvent
+      messages: [
+        {
+          role: "system",
+          content: "Tu es un dictionnaire. Tu réponds uniquement en JSON valide."
+        },
+        {
+          role: "user",
+          content: `Donne un JSON avec exactement ces clés :
+        definition, exemple, phonétique, nature
+        pour le mot : ${mot}.
+        Aucune phrase, aucun markdown, uniquement JSON.`
+        }
+      ],
+      temperature: 0.2
     };
 
+    try {
+      const response = await fetch(URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${API_GROQ}`
+        },
+        body: JSON.stringify(payload)
+      });
 
-    fetch(URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(payload)
-    })
-      .then(response => response.json())
-      .then(data => {
-        console.log(API_Gemini);
-        console.log(process.env.API_GEMINI);
-        if (data.error) console.log("⚠️ Google Gemini est surchargé :", data.error.message);
-        const definitionBrute = data.candidates[0].content.parts[0].text;
-        const clean = definitionBrute
-          .replace(/```json/g, "")
-          .replace(/```/g, "")
-          .trim();
+      const data = await response.json();
 
-        const details = JSON.parse(clean);
-        console.log("Details :", details);
+      if (!response.ok) {
+        console.error("❌ Groq error :", data);
+        return;
+      }
 
+      let text = data?.choices?.[0]?.message?.content;
 
-        socket.emit('afficher_definition', {
-          mot: mot,
-          def: details.definition,
-          phon: details.phonétique,
-          nature: details.nature,
-          exemple : details.exemple
-        });
-      })
-  })
+      if (!text) {
+        console.error("❌ Réponse vide Groq");
+        return;
+      }
+
+      // Nettoyage sécurité
+      text = text.replace(/```json/g, "").replace(/```/g, "").trim();
+
+      let details;
+      try {
+        details = JSON.parse(text);
+      } catch (e) {
+        console.error("❌ JSON invalide :", text);
+        return;
+      }
+
+      console.log("Details :", details);
+
+      socket.emit('afficher_definition', {
+        mot,
+        def: details.definition,
+        phon: details.phonétique,
+        nature: details.nature,
+        exemple: details.exemple
+      });
+
+    } catch (err) {
+      console.error("❌ Erreur réseau Groq :", err);
+    }
+  });
 
 
 
