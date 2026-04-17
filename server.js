@@ -848,8 +848,6 @@ io.on('connection', (socket) => {
         console.log(API_Gemini);
         console.log(process.env.API_GEMINI);
         if (data.error) console.log("⚠️ Google Gemini est surchargé :", data.error.message);
-        console.log("Reponse GEMINI: ", data);
-        console.log("Réponse complète :", JSON.stringify(data, null, 2));
         const definitionBrute = data.candidates[0].content.parts[0].text;
         const details = JSON.parse(definitionBrute);
         console.log("Details :",details);
