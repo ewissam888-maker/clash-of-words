@@ -824,7 +824,7 @@ io.on('connection', (socket) => {
       return;
     }
 
-    const URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_Gemini}`;
+    const URL = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${API_Gemini}`;
 
 
     const payload = {
