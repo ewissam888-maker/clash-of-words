@@ -21,10 +21,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: [
-      "https://clashofwords.alwaysdata.net",
-      "http://localhost:3000"
-    ],
+    origin: "*",
     methods: ["GET", "POST"]
   }
 });
