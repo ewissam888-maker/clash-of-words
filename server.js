@@ -459,6 +459,10 @@ io.on('connection', (socket) => {
         joueur2: joueur2.pseudo,
       });
 
+      joueurs_en_recherche = joueurs_en_recherche.filter(
+        j => j.socketId !== joueur1.socketId && j.socketId !== joueur2.socketId
+      );
+
 
 
 
