@@ -825,7 +825,7 @@ io.on('connection', (socket) => {
     const URL = "https://api.groq.com/openai/v1/chat/completions";
 
     const payload = {
-      model: "llama3-8b-8192", // modèle rapide et gratuit souvent
+      model: "llama-3.1-8b-instant", // modèle rapide et gratuit souvent
       messages: [
         {
           role: "system",
