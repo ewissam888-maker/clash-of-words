@@ -812,10 +812,20 @@ io.on('connection', (socket) => {
   })
 
 
-  const API_Gemini = process.env.API_GEMINI
-  const URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_Gemini}`;
 
   socket.on('Demande_definition', (mot) => {
+
+
+    const API_Gemini = process.env.API_GEMINI;
+
+    if (!API_Gemini) {
+      console.error("❌ Erreur : La clé API_GEMINI est introuvable dans le .env");
+      return;
+    }
+
+    const URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_Gemini}`;
+
+
     const payload = {
       contents: [{
         parts: [{
@@ -839,7 +849,7 @@ io.on('connection', (socket) => {
         console.log("Reponse GEMINI: ", data);
 
 
-        
+
 
         //socket.emit('afficher_definition', { mot: mot, def: definition });
       })
