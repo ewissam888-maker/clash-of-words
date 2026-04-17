@@ -862,7 +862,8 @@ io.on('connection', (socket) => {
           mot: mot,
           def: details.definition,
           phon: details.phonétique,
-          nature: details.nature
+          nature: details.nature,
+          exemple : details.exemple
         });
       })
   })
